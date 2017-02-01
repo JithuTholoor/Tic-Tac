@@ -16,61 +16,122 @@ class Board extends Component {
         this.squareClicked = this.squareClicked.bind(this);
         this.checkStatusOfGame = this.checkStatusOfGame.bind(this);
         this.checkConnection = this.checkConnection.bind(this);
+        this.clearDragging = this.clearDragging.bind(this);
+        this.setDragging = this.setDragging.bind(this);
+        this.move = this.move.bind(this);
     }
 
     squareClicked(index) {
         let squares = this.state.squares.slice();
         if (!squares[index] && !this.state.gameStatus && (( this.state.isXNext && squares.filter((ele) => (ele === 'X')).length < 3) || (!this.state.isXNext && squares.filter((ele) => (ele === 'O')).length < 3))) {
             squares[index] = this.state.isXNext ? 'X' : 'O';
-            this.setState({squares: squares, isXNext: !this.state.isXNext},()=>{
-                let status = this.checkStatusOfGame();
-                if (status)
-                    this.setState({gameStatus: status});
-            });
+            let obj = this.checkStatusOfGame(squares);
+            this.setState({squares: squares, isXNext: !this.state.isXNext,gameStatus: obj.status,direction:obj.direction});
         }
-
     }
 
-    checkConnection(Char, index,increment) {
-        let squares = this.state.squares.slice();
-        if(increment){
+    checkConnection(squares,Char, index, increment) {
+        if (increment) {
             if (squares[index + increment] === Char)
                 return index + increment;
         }
         else {
-            let varaible=[10,1,11,9];
-            for(let i in varaible){
-                if (squares[index + varaible[i]] === Char)
-                    return index + varaible[i];
+            let variable = [10, 1, 11, 9];
+            for (let i in variable) {
+                if (squares[index + variable[i]] === Char)
+                    return index + variable[i];
             }
         }
     }
 
-    checkStatusOfGame() {
-        let squares = this.state.squares.slice();
+    checkStatusOfGame(squares) {
         let indexOfFirstX = squares.indexOf('X');
-        let connectedSquareIndex = this.checkConnection('X', indexOfFirstX);
+        let connectedSquareIndex = this.checkConnection(squares,'X', indexOfFirstX);
         if (connectedSquareIndex) {
-
-            if (this.checkConnection('X', connectedSquareIndex,connectedSquareIndex-indexOfFirstX))
-                return 'X';
+            let secondConnectionIndex = this.checkConnection(squares,'X', connectedSquareIndex, connectedSquareIndex - indexOfFirstX)
+            if (secondConnectionIndex) {
+                let direction;
+                switch (Math.abs(connectedSquareIndex - secondConnectionIndex)) {
+                    case 1:
+                        direction = 'left-right';
+                        break;
+                    case 10:
+                        direction = 'top-bottom'
+                        break;
+                    case 9:
+                        direction = 'leftBottom-rightTop'
+                        break;
+                    case 11:
+                        direction = 'leftTop-rightBottom'
+                        break;
+                }
+                return {direction:direction,status:'X'};
+            }
         }
         let indexOfFirstO = squares.indexOf('O');
-        connectedSquareIndex = this.checkConnection('O', indexOfFirstO);
+        connectedSquareIndex = this.checkConnection(squares,'O', indexOfFirstO);
         if (connectedSquareIndex) {
-            if (this.checkConnection('O', connectedSquareIndex,connectedSquareIndex-indexOfFirstO))
-                return 'O';
+            let secondConnectionIndex = this.checkConnection(squares,'O', connectedSquareIndex, connectedSquareIndex - indexOfFirstO)
+            if (secondConnectionIndex) {
+                let direction;
+                switch (Math.abs(connectedSquareIndex - secondConnectionIndex)) {
+                    case 1:
+                        direction = 'left-right';
+                        break;
+                    case 10:
+                        direction = 'top-bottom'
+                        break;
+                    case 9:
+                        direction = 'leftBottom-rightTop'
+                        break;
+                    case 11:
+                        direction = 'leftTop-rightBottom'
+                        break;
+                }
+                return {direction:direction,status:'O'};
+            }
         }
-        return;
+        return {};
     }
+
+    clearDragging() {
+        this.setState({draggingIndex: null});
+    }
+
+    setDragging(index) {
+        this.setState({draggingIndex: index});
+    }
+
+    move(index) {
+        const squares = this.state.squares.slice();
+        if (this.state.draggingIndex != index && !this.state.squares[index]) {
+            squares[this.state.draggingIndex] = null;
+            squares[index] = this.state.squares[this.state.draggingIndex];
+            let obj = this.checkStatusOfGame(squares);
+            this.setState({squares: squares, isXNext: !this.state.isXNext,gameStatus: obj.status,direction:obj.direction});
+        }
+        this.clearDragging();
+    }
+
 
     render() {
         return (
-            <div>
-                {this.state.gameStatus?this.state.gameStatus+' wins':(this.state.isXNext?'X':'O')+' play'}
-                <div className="board">
+            <div className="board">
+                <h5>{this.state.gameStatus ? this.state.gameStatus + ' wins' : (this.state.isXNext ? 'X' : 'O') + ' play'}</h5>
+                <div>
                     {this.state.squares.map((squareVal, index) => {
-                        return <Square onClick={this.squareClicked} key={index} index={index} value={squareVal}/>
+                        return (<
+                                Square onClick={this.squareClicked}
+                                       gameStatus={this.state.gameStatus}
+                                       key={index} index={index}
+                                       value={squareVal}
+                                       clearDragging={this.clearDragging}
+                                       setDragging={this.setDragging}
+                                       move={this.move}
+                                       direction={this.state.direction}
+                                       draggingSquareIndex={this.state.draggingIndex}
+                                       isDraggable={(squareVal!=null?(this.state.isXNext?squareVal==='X':squareVal==='O'):false) && this.state.gameStatus==null}/>
+                        )
                     })}
                 </div>
             </div>
