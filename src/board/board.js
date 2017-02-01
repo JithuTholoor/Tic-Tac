@@ -3,21 +3,32 @@ import Square from './../square/square';
 
 class Board extends Component {
 
-    getSqaures() {
-        let sqaures = [];
+    constructor(props) {
+        super(props);
+        let squares = [];
         for (let i = 1; i <= 3; i++) {
             for (let j = 1; j <= 3; j++) {
-                sqaures[i+j.toString()]=null;
+                if (!squares[i + j.toString()])
+                    squares[i + j.toString()] = null;
             }
         }
-        return sqaures;
+        this.state = { squares, isXNext: true };
+        this.squareClicked = this.squareClicked.bind(this);
+    }
+
+    squareClicked(index) {
+        let squares = this.state.squares.slice();
+        if (!squares[index] &&(( this.state.isXNext &&  squares.filter((ele) => (ele === 'X')).length < 3) || (! this.state.isXNext &&  squares.filter((ele) => (ele === 'O')).length < 3))) {
+            squares[index] = this.state.isXNext ? 'X' : 'O';
+            this.setState({ squares: squares, isXNext: !this.state.isXNext });
+        }
     }
 
     render() {
         return (
             <div className="board">
-                {this.getSqaures().map((squareVal,index)=>{
-                    return <Square key={index} index={index}/>
+                {this.state.squares.map((squareVal, index) => {
+                    return <Square onClick={this.squareClicked} key={index} index={index} value={squareVal} />
                 })}
             </div>
         )
