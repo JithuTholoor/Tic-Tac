@@ -15,7 +15,7 @@ class Square extends Component {
     }
 
     onDrop(e) {
-        if (this.isDropable())
+        if (this.props.isDroppable)
             this.props.move(this.props.index);
     }
 
@@ -27,14 +27,6 @@ class Square extends Component {
         e.preventDefault();
     }
 
-    isDropable() {
-        if (this.props.draggingSquareIndex && !this.props.value) {
-            let diff = Math.abs(this.props.draggingSquareIndex - this.props.index);
-            if (diff === 1 || diff === 10 || diff === 11 || diff === 9)
-                return true;
-        }
-    }
-
     onDragEnd(e) {
         this.props.clearDragging(this.props.index)
     }
@@ -42,20 +34,19 @@ class Square extends Component {
     getLine(direction) {
         switch (direction) {
             case 'top-bottom':
-                return <line x1="50%" y1="0" x2="50%" y2="100%" style={{stroke:'#333','stroke-width':'2'}}/>
+                return <line x1="50%" y1="0" x2="50%" y2="100%" />
             case 'left-right':
-                return <line x1="0" y1="50%" x2="100%" y2="50%" style={{stroke:'#333','stroke-width':'2'}}/>
+                return <line x1="0" y1="50%" x2="100%" y2="50%" />
             case 'leftTop-rightBottom':
-                return <line x1="0" y1="0" x2="100%" y2="100%" style={{stroke:'#333','stroke-width':'2'}}/>
+                return <line x1="0" y1="0" x2="100%" y2="100%"/>
             case 'leftBottom-rightTop':
-                return <line x1="" y1="100%" x2="100%" y2="0" style={{stroke:'#333','stroke-width':'2'}}/>
+                return <line x1="0" y1="100%" x2="100%" y2="0"/>
             default:
                 return;
         }
     }
 
     getStrike() {
-        if (this.props.value == this.props.gameStatus)
             return (
                 <svg height="100%" width="100%">
                     {this.getLine(this.props.direction)}
@@ -65,7 +56,7 @@ class Square extends Component {
 
     render() {
         return (
-            <div className={this.isDropable() ? 'square active' : 'square non-active'}
+            <div className={this.props.isDroppable ? 'square active' : 'square'}
                  onDragOver={this.onDragOver} onDrop={this.onDrop}
                  id={this.props.index} onClick={this.onSquareClick} onDragEnd={this.onDragEnd}>
                 {this.getStrike()}
