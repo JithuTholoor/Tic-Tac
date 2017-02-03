@@ -97,8 +97,11 @@ describe('Board component', ()=> {
     });
 
     describe('game status',()=>{
+        let tree;
+        beforeAll(()=>{
+            tree = mount(<Board/>);
+        });
         it('X winner',()=>{
-            let tree = mount(<Board/>);
             tree.node.squareClicked(11);
             tree.node.squareClicked(12);
             tree.node.squareClicked(21);
@@ -107,7 +110,6 @@ describe('Board component', ()=> {
             expect(tree.state().gameStatus).toBe('X');
         });
         it('O winner',()=>{
-            let tree = mount(<Board/>);
             tree.node.squareClicked(11);
             tree.node.squareClicked(12);
             tree.node.squareClicked(23);
@@ -118,7 +120,6 @@ describe('Board component', ()=> {
         });
 
         it('X winner diagonally',()=>{
-            let tree = mount(<Board/>);
             tree.node.squareClicked(11);
             tree.node.squareClicked(12);
             tree.node.squareClicked(22);
@@ -127,7 +128,6 @@ describe('Board component', ()=> {
             expect(tree.state().gameStatus).toBe('X');
         });
         it('X winner diagonally',()=>{
-            let tree = mount(<Board/>);
             tree.node.squareClicked(13);
             tree.node.squareClicked(12);
             tree.node.squareClicked(22);
@@ -136,7 +136,6 @@ describe('Board component', ()=> {
             expect(tree.state().gameStatus).toBe('X');
         });
         it('X winner horizontally',()=>{
-            let tree = mount(<Board/>);
             tree.node.squareClicked(11);
             tree.node.squareClicked(21);
             tree.node.squareClicked(12);
