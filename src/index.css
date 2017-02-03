@@ -32,6 +32,8 @@ body {
     position: relative;
     cursor: context-menu;
     user-select: none;
+    stroke:#333;
+    stroke-width:2;
 }
 
 .square > span {
