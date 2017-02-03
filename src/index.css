@@ -1,35 +1,53 @@
 body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
 }
 
-.game{
-  font-family: 'Ubuntu', sans-serif;
+.game {
+    font-family: 'Ubuntu', sans-serif;
 }
 
-.board{
+.board {
     width: 150px;
     margin: 10px;
+    text-align: center;
+    float: left;
 }
 
-.square{
-  float: left;
-  box-sizing: border-box;
-  width: 50px;
-  height: 50px;
-  margin-left: -1px;
-  margin-bottom: -1px;
-  border: 1px solid #333;
-  border-collapse: collapse;
-  position: relative;
+.board h5 {
+    font-weight: normal;
+    margin: 5px;
 }
 
-.square>span{
+.square {
+    float: left;
+    box-sizing: border-box;
+    width: 50px;
+    height: 50px;
+    margin-left: -1px;
+    margin-bottom: -1px;
+    border: 1px solid #333;
+    border-collapse: collapse;
+    position: relative;
+    cursor: context-menu;
+    user-select: none;
+    stroke:#333;
+    stroke-width:2;
+}
+
+.square > span {
     margin: auto;
     font-size: 30px;
     position: absolute;
     left: 50%;
     top: 50%;
-    transform: translate( -50%, -50%);
+    transform: translate(-50%, -50%);
+}
+.square > span[draggable='true']{
+    cursor: pointer;
+}
+
+.square.active{
+    background-color: #ddd;
 }
